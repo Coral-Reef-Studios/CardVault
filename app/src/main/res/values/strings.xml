@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CardVault NFC</string>
+    <string name="hce_service_description">CardVault NFC card emulation</string>
+    <string name="hce_aid_group">CardVault NDEF and custom cards</string>
+</resources>
