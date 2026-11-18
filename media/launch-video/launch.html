@@ -114,11 +114,11 @@ body { font-family: "Instrument Sans", sans-serif; color: #E6EAF5; position: rel
   <div id="notch" class="abs"></div>
   <div id="wallet" class="abs" style="inset:0">
     <div class="appbar abs">CardVault</div>
-    <div class="wcard c1 abs" style="top:130px"><b>City transit</b><s>Monthly pass, 6 trips left</s><span class="mono">•••• 4829</span></div>
-    <div class="wcard c2 abs" style="top:276px"><b>CV 1042</b><s>Fri 4 Dec, 07:15, gate B12</s><span class="big">BRU ✈ LIS</span></div>
-    <div class="wcard c3 abs" style="top:422px"><b>Summer Night Live</b><s>Sat 20 June, 20:00</s><span class="big" style="font-size:28px">Section C, row 8</span></div>
-    <div class="wcard c4 abs" style="top:568px"><b>Corner Grocery</b><s>Gold member</s><span class="mono">•••• 7731</span></div>
-    <div class="wcard c5 abs" style="top:714px"><b>Desk check-in</b><s>NFC tag</s><span class="mono">04:A2:1F:7C</span></div>
+    <div class="wcard c1 abs" style="top:130px"><b>Transit card</b><s>Monthly pass, 6 trips left</s><span class="mono">•••• 4829</span></div>
+    <div class="wcard c2 abs" style="top:276px"><b>Boarding pass</b><s>Fri 4 Dec, 07:15, gate B12</s><span class="big">BRU ✈ LIS</span></div>
+    <div class="wcard c3 abs" style="top:422px"><b>Event ticket</b><s>Sat 20 June, 20:00</s><span class="big" style="font-size:28px">Section C, row 8</span></div>
+    <div class="wcard c4 abs" style="top:568px"><b>Loyalty card</b><s>Gold member</s><span class="mono">•••• 7731</span></div>
+    <div class="wcard c5 abs" style="top:714px"><b>NFC tag</b><s>Tap to share</s><span class="mono">04:A2:1F:7C</span></div>
   </div>
   <div id="detail" class="abs">
     <svg id="fp" class="abs" viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-width="2.6">
@@ -126,7 +126,7 @@ body { font-family: "Instrument Sans", sans-serif; color: #E6EAF5; position: rel
       <g id="fpOn" stroke="#22D3EE"><path d="M14 20a10 10 0 0 1 20 0v3"/><path d="M10 26v-6a14 14 0 0 1 28 0v6"/><path d="M18 34c2-3 2-7 2-14a4 4 0 0 1 8 0c0 9-1 14-4 18"/><path d="M24 20c0 8-1 13-5 19"/><path d="M33 28c0 5-1 9-3 12"/></g>
     </svg>
     <div id="fpText" class="abs">Touch the sensor</div>
-    <div id="tapCard" class="wcard c5 abs"><b>Desk check-in</b><s>NFC tag</s><span class="mono">04:A2:1F:7C</span></div>
+    <div id="tapCard" class="wcard c5 abs"><b>NFC tag</b><s>Ready for the reader</s><span class="mono">04:A2:1F:7C</span></div>
     <svg id="ring" class="abs" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#2A3453" stroke-width="8"/><circle id="arc" cx="50" cy="50" r="42" fill="none" stroke="#22D3EE" stroke-width="8" stroke-linecap="round" pathLength="100" stroke-dasharray="100" transform="rotate(-90 50 50)"/>
       <path d="M40 38a14 14 0 0 1 0 24M47 32a22 22 0 0 1 0 36M54 26a30 30 0 0 1 0 48" stroke="#22D3EE" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
     <div id="ringText" class="abs"><b>Ready to tap</b><span id="secs">45 s remaining</span></div>
@@ -154,9 +154,9 @@ const show = (el, o, tf = "") => { el.style.opacity = o; el.style.transform = tf
 const fade = (t, a, b, c, d) => Math.min(out(p(t, a, b)), 1 - p(t, c, d)); // in a→b, out c→d
 
 // scattered physical cards for the "too many cards" beat
-const colors = [["#E11D48","#7F1D1D","City transit","•••• 4829"],["#2563EB","#0B1330","CV 1042","BRU ✈ LIS"],["#F59E0B","#78350F","Corner Grocery","•••• 7731"],
-  ["#10B981","#064E3B","Gym","•••• 0045"],["#A78BFA","#2E1065","Festival pass","Row 8"],["#64748B","#0F172A","Library","•••• 2210"],
-  ["#EC4899","#500724","Coffee club","•••• 9182"],["#0EA5E9","#312E81","Office badge","04:A2:1F"],["#F97316","#7C2D12","Cinema","Seat 14"]];
+const colors = [["#E11D48","#7F1D1D","Transit card","•••• 4829"],["#2563EB","#0B1330","Boarding pass","BRU ✈ LIS"],["#F59E0B","#78350F","Loyalty card","•••• 7731"],
+  ["#10B981","#064E3B","Membership","•••• 0045"],["#A78BFA","#2E1065","Event ticket","Row 8"],["#64748B","#0F172A","Library card","•••• 2210"],
+  ["#EC4899","#500724","Gift card","•••• 9182"],["#0EA5E9","#312E81","Access badge","04:A2:1F"],["#F97316","#7C2D12","Student ID","•••• 3307"]];
 const spots = [[1050,180,-14],[1380,120,9],[1250,420,-4],[1600,380,16],[1000,560,8],[1450,700,-11],[1700,640,5],[1150,780,-18],[1550,200,22]];
 const sc = $("scatter");
 const pcs = colors.map((c, i) => { const d = document.createElement("div"); d.className = "pcard abs";
