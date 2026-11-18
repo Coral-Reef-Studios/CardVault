@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CardVault NFC: every card you carry, locked on your phone</title>
+<meta name="description" content="Open-source Android wallet for NFC tags, transit cards, loyalty cards, tickets and boarding passes. Biometric-locked, offline-first, zero-knowledge backups.">
+<meta name="theme-color" content="#141A2B">
+<meta property="og:title" content="CardVault NFC">
+<meta property="og:description" content="Every card you carry, locked on your phone. Open source, offline-first, no trackers.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+@font-face { font-family: "Bricolage"; src: url(fonts/bricolage.woff2) format("woff2"); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url(fonts/instrument-sans-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url(fonts/instrument-sans-latin-500-normal.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url(fonts/instrument-sans-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+
+:root {
+  --navy: #141A2B;
+  --navy-deep: #0F1422;
+  --panel: #1A2238;
+  --line: #2A3453;
+  --ink: #E6EAF5;
+  --ink-soft: #A7B0C8;
+  --cyan: #22D3EE;
+  --coral: #FF7A6B;
+  --display: "Bricolage", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --wrap: 1120px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--navy); color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--cyan); text-underline-offset: 3px; }
+a:hover { color: #67E8F9; }
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 16px; top: 16px; background: var(--cyan); color: var(--navy); padding: 8px 12px; z-index: 10; }
+
+/* ---------- header ---------- */
+.site-head { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 700 1.15rem/1 var(--display); letter-spacing: -0.01em; }
+.brand svg { width: 30px; height: 30px; }
+.site-nav { display: flex; gap: 26px; }
+.site-nav a { color: var(--ink-soft); text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+.site-nav a:hover { color: var(--ink); }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 56px 0 96px; }
+.hero h1 {
+  font: 760 clamp(2.6rem, 6.2vw, 4.6rem)/0.98 var(--display);
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.035em; margin: 0 0 24px; text-wrap: balance;
+}
+.hero .lede { font-size: 1.2rem; color: var(--ink-soft); max-width: 34ch; margin: 0 0 36px; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; padding: 15px 22px; border-radius: 14px;
+  font: 600 1rem/1 var(--body); text-decoration: none; border: 1px solid transparent;
+}
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn-primary { background: var(--cyan); color: var(--navy); }
+.btn-primary:hover { background: #67E8F9; color: var(--navy); }
+.btn-ghost { color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { color: var(--ink); border-color: var(--ink-soft); }
+.release-meta { margin: 16px 0 0; color: var(--ink-soft); font-size: 0.9rem; min-height: 1.4em; }
+
+/* the wallet: the one bold moment on the page */
+.wallet { position: relative; height: 470px; perspective: 1400px; }
+.wallet-hint { position: absolute; bottom: -8px; left: 0; right: 0; text-align: center; color: var(--ink-soft); font-size: 0.85rem; }
+.card {
+  position: absolute; left: 50%; top: 50%; width: 340px; aspect-ratio: 1.586; margin: -107px 0 0 -170px;
+  border-radius: 22px; padding: 20px 22px; color: #fff; border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.55), 0 2px 0 rgba(255,255,255,.08) inset;
+  display: flex; flex-direction: column; justify-content: space-between;
+  cursor: pointer; text-align: left; font: inherit;
+  transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(var(--s, 1));
+  transition: transform .55s cubic-bezier(.2,.8,.2,1), filter .4s;
+  will-change: transform;
+}
+.card:not(.is-front) { filter: saturate(.85) brightness(.82); }
+.card .top { display: flex; gap: 12px; align-items: flex-start; }
+.card .ico { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,.18); display: grid; place-items: center; flex: none; }
+.card .ico svg { width: 22px; height: 22px; }
+.card .t { font: 650 1.12rem/1.2 var(--display); }
+.card .st { font-size: .82rem; opacity: .78; }
+.card .num { font: 400 1.05rem/1 var(--mono); letter-spacing: .12em; }
+.card .row { display: flex; justify-content: space-between; align-items: flex-end; font-size: .78rem; opacity: .85; }
+.card .route { font: 750 2.3rem/1 var(--display); letter-spacing: .02em; display: flex; align-items: center; gap: 14px; }
+.card .route svg { width: 24px; height: 24px; opacity: .85; }
+.card .big { font: 700 1.55rem/1.1 var(--display); }
+.card .bars { height: 34px; background: #fff; border-radius: 6px; padding: 5px 8px; }
+.card .bars span { display: block; height: 100%; background: repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 4px,#111 4px 5px,transparent 5px 8px,#111 8px 11px,transparent 11px 12px,#111 12px 13px,transparent 13px 16px); }
+.c-transit { background: linear-gradient(135deg,#E11D48,#7F1D1D); }
+.c-flight  { background: linear-gradient(135deg,#2563EB,#0B1330); }
+.c-ticket  { background: radial-gradient(circle at 20% 15%,#A78BFA,#2E1065 75%); }
+.c-loyalty { background: linear-gradient(135deg,#F59E0B,#78350F); }
+.c-tag     { background: linear-gradient(135deg,#0EA5E9,#312E81); }
+
+.tap-ring { display: none; align-items: center; gap: 12px; font-size: .85rem; }
+.c-tag.is-front .tap-ring { display: flex; }
+.c-tag.is-front .tag-num { display: none; }
+.tap-ring svg { width: 38px; height: 38px; transform: rotate(-90deg); }
+.tap-ring circle { fill: none; stroke-width: 4; }
+.tap-ring .trk { stroke: rgba(255,255,255,.25); }
+.tap-ring .arc { stroke: #fff; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 0; }
+.c-tag.is-front .arc { animation: drain 45s linear forwards; }
+@keyframes drain { to { stroke-dashoffset: 100; } }
+
+@keyframes deal { from { transform: translate(0, 220px) rotate(0) scale(.9); opacity: 0; } }
+.wallet.dealing .card { animation: deal .8s cubic-bezier(.2,.8,.2,1) backwards; }
+.wallet.dealing .card:nth-child(2) { animation-delay: .08s; }
+.wallet.dealing .card:nth-child(3) { animation-delay: .16s; }
+.wallet.dealing .card:nth-child(4) { animation-delay: .24s; }
+.wallet.dealing .card:nth-child(5) { animation-delay: .32s; }
+
+/* ---------- sections ---------- */
+section { padding: 88px 0; }
+.band { background: var(--navy-deep); border-block: 1px solid var(--line); }
+h2 { font: 720 clamp(2rem, 4vw, 2.9rem)/1.05 var(--display); letter-spacing: -0.025em; margin: 0 0 18px; max-width: 22ch; text-wrap: balance; }
+h3 { font: 650 1.2rem/1.25 var(--display); margin: 0 0 6px; }
+.intro { color: var(--ink-soft); max-width: 60ch; margin: 0 0 48px; font-size: 1.1rem; }
+
+.kinds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 40px; }
+.kind { border-left: 3px solid var(--k); padding-left: 18px; }
+.kind p { margin: 0; color: var(--ink-soft); }
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+.console {
+  background: #0A0E18; border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px;
+  font: 400 .88rem/1.75 var(--mono); overflow-x: auto;
+}
+.console .in { color: var(--cyan); }
+.console .out { color: #34D399; }
+.console .note { color: var(--ink-soft); font-family: var(--body); font-size: .85rem; margin-top: 10px; }
+.points { list-style: none; padding: 0; margin: 0; }
+.points li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.points li:last-child { border-bottom: 0; }
+.points strong { display: block; font-weight: 600; }
+.points span { color: var(--ink-soft); }
+
+.threats { width: 100%; border-collapse: collapse; }
+.threats th, .threats td { text-align: left; vertical-align: top; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.threats th { width: 32%; padding-right: 32px; font: 600 1.05rem/1.4 var(--display); }
+.threats td { color: var(--ink-soft); }
+
+.limits { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 48px; }
+.limits p { margin: 0; color: var(--ink-soft); }
+
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.steps li { counter-increment: s; }
+.steps li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--panel); border: 1px solid var(--line); font: 700 1.1rem/1 var(--display); color: var(--cyan); margin-bottom: 14px; }
+.steps p { margin: 0; color: var(--ink-soft); }
+.fingerprint { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+.fingerprint code { display: block; font: 400 .85rem/1.6 var(--mono); color: var(--ink); word-break: break-all; margin: 8px 0 0; }
+.fingerprint p { margin: 0; color: var(--ink-soft); font-size: .95rem; }
+
+.open { display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px; align-items: center; }
+.open p { color: var(--ink-soft); max-width: 58ch; }
+
+footer { padding: 40px 0 56px; color: var(--ink-soft); font-size: .88rem; border-top: 1px solid var(--line); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
+footer p { margin: 0; max-width: 70ch; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding-top: 24px; }
+  .wallet { height: 400px; }
+  .kinds, .limits { grid-template-columns: 1fr 1fr; }
+  .split, .open { grid-template-columns: 1fr; gap: 36px; }
+  .steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .site-nav a:not(.gh) { display: none; }
+  .card { width: 290px; margin: -91px 0 0 -145px; padding: 16px 18px; }
+  .card .route { font-size: 1.9rem; }
+  .kinds, .limits { grid-template-columns: 1fr; }
+  .threats th { width: auto; display: block; padding-bottom: 4px; border: 0; }
+  .threats td { display: block; padding-top: 0; }
+  section { padding: 64px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .card { transition: none; }
+  .wallet.dealing .card, .c-tag.is-front .arc { animation: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="site-head">
+    <a class="brand" href="./" aria-label="CardVault NFC home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="7" width="28" height="19" rx="4" fill="#22D3EE"/><rect x="6" y="13" width="7" height="6" rx="1" fill="#141A2B"/><path d="M19 12.5a5 5 0 0 1 0 8M22.5 10a9 9 0 0 1 0 13" stroke="#141A2B" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      CardVault NFC
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="#cards">Cards</a>
+      <a href="#security">Security</a>
+      <a href="#install">Install</a>
+      <a class="gh" href="https://github.com/dev-uraXium/CardVault">GitHub</a>
+    </nav>
+  </header>
+</div>
+
+<main id="main">
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Every card you carry, locked on your phone.</h1>
+        <p class="lede">Transit cards, boarding passes, tickets, loyalty cards and NFC tags in one wallet that only opens for your fingerprint, and never phones home.</p>
+        <div class="actions">
+          <a class="btn btn-primary" id="download" href="https://github.com/dev-uraXium/CardVault/releases/latest">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="download-label">Download for Android</span>
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/dev-uraXium/CardVault">View the source</a>
+        </div>
+        <p class="release-meta" id="release-meta">Free and open source. Android 10 or newer.</p>
+      </div>
+
+      <div class="wallet dealing" id="wallet" role="group" aria-label="Example cards. Select a card to bring it to the front.">
+        <button class="card c-transit" type="button" aria-label="Transit card">
+          <div class="top">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 11h12M9 21l1.5-3m4.5 3-1.5-3"/><circle cx="9.5" cy="14" r=".6" fill="#fff"/><circle cx="14.5" cy="14" r=".6" fill="#fff"/></svg></div>
+            <div><div class="t">City transit</div><div class="st">Monthly pass, 6 trips left</div></div>
+          </div>
+          <div class="num">•••• 4829</div>
+          <div class="row"><span>Read-only Calypso card</span><span>Valid to 31/12</span></div>
+        </button>
+
+        <button class="card c-loyalty" type="button" aria-label="Loyalty card">
+          <div class="top">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg></div>
+            <div><div class="t">Corner Grocery</div><div class="st">Gold member</div></div>
+          </div>
+          <div class="bars"><span></span></div>
+          <div class="row"><span>Shown at full brightness at checkout</span></div>
+        </button>
+
+        <button class="card c-ticket" type="button" aria-label="Concert ticket">
+          <div class="top">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></div>
+            <div><div class="t">Summer Night Live</div><div class="st">Open air</div></div>
+          </div>
+          <div class="big">Sat 20 June, 20:00</div>
+          <div class="row"><span>Section C, row 8, seat 14</span><span>Starts in 3 days</span></div>
+        </button>
+
+        <button class="card c-flight" type="button" aria-label="Boarding pass from Brussels to Lisbon">
+          <div class="top">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="#fff"><path d="M21 15.5v-2l-8-5V3.8a1.5 1.5 0 0 0-3 0V8.5l-8 5v2l8-2.5V18l-2 1.5V21l3.5-1 3.5 1v-1.5L13 18v-5z"/></svg></div>
+            <div><div class="t">CV 1042</div><div class="st">Boarding pass</div></div>
+          </div>
+          <div class="route">BRU <svg viewBox="0 0 24 24" fill="#fff" style="transform:rotate(90deg)"><path d="M21 15.5v-2l-8-5V3.8a1.5 1.5 0 0 0-3 0V8.5l-8 5v2l8-2.5V18l-2 1.5V21l3.5-1 3.5 1v-1.5L13 18v-5z"/></svg> LIS</div>
+          <div class="row"><span>Fri 4 Dec, 07:15</span><span>Gate B12, seat 14A</span></div>
+        </button>
+
+        <button class="card c-tag is-front" type="button" aria-label="NFC tag, ready to tap">
+          <div class="top">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17"/></svg></div>
+            <div><div class="t">Desk check-in</div><div class="st">NFC tag</div></div>
+          </div>
+          <div class="num tag-num">04:A2:1F:7C</div>
+          <div class="tap-ring" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><circle class="trk" cx="20" cy="20" r="16" pathLength="100"/><circle class="arc" cx="20" cy="20" r="16" pathLength="100"/></svg>
+            <span>Ready to tap. Hold the phone to the reader.</span>
+          </div>
+          <div class="row"><span>Phone-as-card, unlocked for 45 seconds</span></div>
+        </button>
+        <p class="wallet-hint">Tap a card to bring it to the front.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="band" id="cards">
+    <div class="wrap">
+      <h2>One wallet for everything with a chip or a code</h2>
+      <p class="intro">Add a card by holding it to your phone, pointing the camera at its barcode, opening a pass file, or typing it in.</p>
+      <div class="kinds">
+        <div class="kind" style="--k:#E11D48"><h3>Transit cards</h3><p>Read Calypso cards like MOBIB to see the serial, contracts and trip counters, without ever writing to the card.</p></div>
+        <div class="kind" style="--k:#2563EB"><h3>Boarding passes</h3><p>Scan the barcode on any airline's boarding pass and the flight, route, seat and booking reference fill in by themselves.</p></div>
+        <div class="kind" style="--k:#A78BFA"><h3>Tickets and passes</h3><p>Open Apple Wallet <code>.pkpass</code> files from mail or your browser. Upcoming ones move to the top of your wallet.</p></div>
+        <div class="kind" style="--k:#F59E0B"><h3>Loyalty and gift cards</h3><p>Barcodes and QR codes shown big and at full brightness, so the checkout scanner gets them first time, even in a basement with no signal.</p></div>
+        <div class="kind" style="--k:#0EA5E9"><h3>NFC tags and badges</h3><p>Read any tag, clone NDEF tags, or build your own: links, text, Wi-Fi logins or a contact card your phone can hand over.</p></div>
+        <div class="kind" style="--k:#FF7A6B"><h3>Yours to design</h3><p>Pick colours and gradients, add your own artwork, choose what shows on the card face, and theme the whole app light, dark or pure black.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nfc">
+    <div class="wrap split">
+      <div>
+        <h2>Your phone becomes the card</h2>
+        <p class="intro">CardVault answers NFC readers itself using Android's host card emulation. It only does that for the card you unlocked, and only for as long as you chose.</p>
+        <ul class="points">
+          <li><strong>Off until you say so</strong><span>A card responds only after a fresh fingerprint or PIN, for 15 seconds up to 2 minutes.</span></li>
+          <li><strong>Tags and custom cards</strong><span>Emulates NFC Forum Type 4 tags and your own ISO-DEP responses with any AID.</span></li>
+          <li><strong>See every byte</strong><span>A live console shows each command from the reader and every answer your phone sends.</span></li>
+        </ul>
+      </div>
+      <div class="console" aria-label="Example APDU exchange">
+        <div class="in">→ 00 A4 04 00 07 D2 76 00 00 85 01 01 00</div>
+        <div class="out">← 90 00</div>
+        <div class="in">→ 00 A4 00 0C 02 E1 03</div>
+        <div class="out">← 90 00</div>
+        <div class="in">→ 00 B0 00 00 0F</div>
+        <div class="out">← 00 0F 20 00 3B 00 34 04 06 E1 04 00 80 00 FF 90 00</div>
+        <div class="in">→ 00 B0 00 02 10</div>
+        <div class="out">← D1 01 0C 55 04 65 78 61 6D 70 6C 65 2E 63 6F 6D 90 00</div>
+        <p class="note">A reader selecting the NDEF app and reading a link from your phone.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="security">
+    <div class="wrap">
+      <h2>Built for the day you lose your phone</h2>
+      <p class="intro">No account, no ads, no analytics. The app only goes online when you back up to your own Google Drive or check for updates.</p>
+      <table class="threats">
+        <caption class="skip">What CardVault protects against and how</caption>
+        <tbody>
+          <tr><th scope="row">Someone picks up your unlocked phone</th><td>The app and each card ask for your fingerprint, face or PIN. Card numbers stay masked until you choose to show them.</td></tr>
+          <tr><th scope="row">Skimming through your pocket</th><td>Nothing answers a reader unless you unlocked a card a moment ago, and Android also needs the phone itself to be unlocked.</td></tr>
+          <tr><th scope="row">Someone copies the phone's storage</th><td>Card data is encrypted with AES-256 using a key locked inside the phone's security chip, in a database that is encrypted too.</td></tr>
+          <tr><th scope="row">Your Google account is breached</th><td>Backups are encrypted on the phone with your passphrase before upload. Without it, Google and we see only noise.</td></tr>
+          <tr><th scope="row">A fake update</th><td>Android installs updates only if they are signed with our release key, and the app checks the published checksum first.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="limits">
+    <div class="wrap">
+      <h2>What it won't do</h2>
+      <p class="intro">Some cards are protected by hardware no app can copy. We'd rather tell you now than after you're stuck at a gate.</p>
+      <div class="limits">
+        <div><h3>Replace your transit card at the gate</h3><p>Gates check a signature from the card's secure chip. CardVault reads your card, but you still tap the real one.</p></div>
+        <div><h3>Pay</h3><p>Bank cards are detected and refused. Keep using your bank's wallet for that.</p></div>
+        <div><h3>Copy hotel keys and old badges</h3><p>MIFARE Classic and UID-only cards can't be emulated on Android. You can still store their details as a reference.</p></div>
+        <div><h3>Tap loyalty cards</h3><p>Hardly any shop reads loyalty cards over NFC, so CardVault shows their barcode instead.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="install">
+    <div class="wrap">
+      <h2>Install in a minute</h2>
+      <p class="intro">CardVault isn't on the Play Store. You install it straight from our releases, and it keeps itself up to date after that.</p>
+      <ol class="steps">
+        <li><h3>Download the APK</h3><p>Get <a id="apk-link" href="https://github.com/dev-uraXium/CardVault/releases/latest">the latest release</a> on your phone.</p></li>
+        <li><h3>Allow the install</h3><p>Open the file. Android asks once whether your browser may install apps; allow it.</p></li>
+        <li><h3>Stay up to date</h3><p>New versions appear in the app under Settings, Updates. One tap installs them.</p></li>
+      </ol>
+      <div class="fingerprint">
+        <p>Want to check it's really ours? Every release is signed with this certificate (SHA-256):</p>
+        <code>49:B6:1A:F3:6B:D5:B1:9C:E1:B5:78:60:D7:53:E7:9A:0F:C8:C4:02:F2:AA:19:1D:05:9E:06:54:F0:7C:E0:C7</code>
+      </div>
+    </div>
+  </section>
+
+  <section id="open-source">
+    <div class="wrap open">
+      <div>
+        <h2>Open source, and staying that way</h2>
+        <p>CardVault is licensed under the GNU GPL v3. Anyone can read, build and change the code, and anyone who ships a modified version has to publish theirs too. Bug reports, ideas and pull requests are welcome.</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-ghost" href="https://github.com/dev-uraXium/CardVault">Browse the code</a>
+        <a class="btn btn-ghost" href="https://github.com/dev-uraXium/CardVault/issues/new/choose">Report a bug</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 uraXium. CardVault NFC is free software under the <a href="https://github.com/dev-uraXium/CardVault/blob/main/LICENSE">GPL-3.0</a>. This site loads no trackers or third-party fonts.</p>
+    <p>MOBIB, Apple Wallet, Google Drive and other names belong to their owners. CardVault isn't affiliated with them.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // ----- wallet fan: tap a card to bring it to the front -----
+  const wallet = document.getElementById('wallet');
+  const cards = [...wallet.querySelectorAll('.card')];
+  let order = cards.slice(); // last = front
+  const narrow = matchMedia('(max-width: 600px)');
+
+  function layout() {
+    const n = order.length;
+    const spreadX = narrow.matches ? 10 : 22;
+    const spreadY = narrow.matches ? -34 : -48;
+    order.forEach((card, i) => {
+      const depth = n - 1 - i; // 0 = front
+      card.style.zIndex = String(i + 1);
+      card.style.setProperty('--x', `${depth * spreadX - (n - 1) * spreadX / 2 + (depth ? 0 : 0)}px`);
+      card.style.setProperty("--y", `${depth * spreadY + (narrow.matches ? 60 : 80)}px`);
+      card.style.setProperty('--r', `${depth === 0 ? -2 : (depth % 2 ? 4 : -6) + depth}deg`);
+      card.style.setProperty('--s', `${1 - depth * 0.035}`);
+      card.classList.toggle('is-front', depth === 0);
+      card.setAttribute('aria-pressed', depth === 0 ? 'true' : 'false');
+    });
+  }
+  cards.forEach(card => card.addEventListener('click', () => {
+    if (order[order.length - 1] === card) return;
+    order = order.filter(c => c !== card).concat(card);
+    // restart the 45 s ring each time the tag card is brought forward
+    const arc = card.querySelector('.arc');
+    if (arc) { arc.style.animation = 'none'; void arc.offsetWidth; arc.style.animation = ''; }
+    layout();
+  }));
+  narrow.addEventListener('change', layout);
+  layout();
+  setTimeout(() => wallet.classList.remove('dealing'), 1400);
+
+  // ----- live download link from the latest GitHub release -----
+  fetch('https://api.github.com/repos/dev-uraXium/CardVault/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(rel => {
+      const apk = (rel.assets || []).find(a => a.name.endsWith('.apk'));
+      if (!apk) return;
+      const mb = Math.round(apk.size / 1048576);
+      const date = new Date(rel.published_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('download').href = apk.browser_download_url;
+      document.getElementById('apk-link').href = apk.browser_download_url;
+      document.getElementById('download-label').textContent = `Download ${rel.tag_name}`;
+      document.getElementById('release-meta').textContent = `${mb} MB APK, released ${date}. Free and open source, Android 10 or newer.`;
+    })
+    .catch(() => { /* keep the static fallback link to the releases page */ });
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,8 @@ Biometric-locked, offline-first, and nobody can read your backups but you.**
 [![Build](https://github.com/dev-uraXium/CardVault/actions/workflows/ci.yml/badge.svg)](https://github.com/dev-uraXium/CardVault/actions/workflows/ci.yml)
 ![Android 10+](https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&logoColor=white)
 
+**[Website](https://dev-uraxium.github.io/CardVault/)** · **[Download](https://github.com/dev-uraXium/CardVault/releases/latest)**
+
 </div>
 
 ---
