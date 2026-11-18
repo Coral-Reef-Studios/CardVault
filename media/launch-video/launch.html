@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Bricolage"; src: url(fonts/bricolage.woff2) format("woff2"); font-weight: 200 800; }
+@font-face { font-family: "Instrument Sans"; src: url(fonts/instrument-sans-latin-500-normal.woff2) format("woff2"); font-weight: 500; }
+@font-face { font-family: "Instrument Sans"; src: url(fonts/instrument-sans-latin-600-normal.woff2) format("woff2"); font-weight: 600; }
+@font-face { font-family: "JetBrains Mono"; src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: #141A2B; }
+body { font-family: "Instrument Sans", sans-serif; color: #E6EAF5; position: relative; }
+.abs { position: absolute; }
+#glow { inset: 0; background: radial-gradient(900px 700px at 70% 45%, rgba(34,211,238,.10), transparent 70%), radial-gradient(800px 600px at 15% 80%, rgba(255,122,107,.08), transparent 70%); }
+.h { font-family: "Bricolage"; font-weight: 760; letter-spacing: -0.035em; line-height: .98; }
+#presents { left: 0; right: 0; top: 500px; text-align: center; font: 600 40px "Instrument Sans"; color: #FF7A6B; letter-spacing: .02em; }
+#presents small { display: block; color: #A7B0C8; font-weight: 500; font-size: 26px; margin-top: 10px; letter-spacing: .3em; }
+#tooMany { left: 160px; top: 420px; font-size: 128px; width: 1100px; }
+
+.pcard { width: 300px; height: 189px; border-radius: 20px; left: 0; top: 0; border: 1px solid rgba(255,255,255,.15);
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.6); padding: 18px 20px; color: #fff; }
+.pcard b { font: 650 22px "Bricolage"; display: block; }
+.pcard i { font: 400 18px "JetBrains Mono"; font-style: normal; position: absolute; bottom: 18px; left: 20px; letter-spacing: .1em; opacity: .9; }
+
+#title { left: 160px; top: 330px; width: 820px; }
+#title .h { font-size: 132px; }
+#title p { font: 500 40px/1.3 "Instrument Sans"; color: #A7B0C8; margin-top: 34px; max-width: 760px; }
+
+/* phone */
+#phone { left: 1180px; top: 90px; width: 440px; height: 900px; border-radius: 64px; background: #05070D; padding: 16px;
+  box-shadow: 0 60px 120px -30px rgba(0,0,0,.8), 0 0 0 2px #2A3453 inset; }
+#screen { position: relative; width: 100%; height: 100%; border-radius: 50px; background: #141A2B; overflow: hidden; }
+#notch { left: 50%; top: 14px; width: 110px; height: 30px; margin-left: -55px; background: #05070D; border-radius: 20px; z-index: 5; }
+.appbar { left: 26px; top: 70px; font: 700 30px "Bricolage"; }
+.wcard { left: 22px; width: 364px; height: 150px; border-radius: 22px; padding: 16px 18px; color: #fff; border: 1px solid rgba(255,255,255,.14); }
+.wcard b { font: 650 21px "Bricolage"; display: block; }
+.wcard s { text-decoration: none; font-size: 15px; opacity: .8; display: block; }
+.wcard .big { font: 760 40px "Bricolage"; letter-spacing: .02em; position: absolute; left: 18px; bottom: 16px; }
+.wcard .mono { font: 400 18px "JetBrains Mono"; position: absolute; left: 18px; bottom: 18px; letter-spacing: .1em; }
+.c1 { background: linear-gradient(135deg,#E11D48,#7F1D1D); }
+.c2 { background: linear-gradient(135deg,#2563EB,#0B1330); }
+.c3 { background: radial-gradient(circle at 20% 15%,#A78BFA,#2E1065 75%); }
+.c4 { background: linear-gradient(135deg,#F59E0B,#78350F); }
+.c5 { background: linear-gradient(135deg,#0EA5E9,#312E81); }
+
+#feat { left: 160px; top: 300px; width: 900px; }
+#feat .h { font-size: 88px; margin-bottom: 50px; }
+.fi { font: 600 46px "Instrument Sans"; padding: 14px 0 14px 34px; border-left: 6px solid var(--k); margin-bottom: 18px; }
+
+/* detail / emulation screen */
+#detail { inset: 0; }
+#fp { left: 50%; top: 300px; width: 180px; height: 180px; margin-left: -90px; }
+#fpText { left: 0; right: 0; top: 520px; text-align: center; font: 600 26px "Instrument Sans"; color: #A7B0C8; }
+#tapCard { left: 22px; top: 110px; width: 364px; height: 230px; }
+#ring { left: 50%; top: 420px; width: 200px; height: 200px; margin-left: -100px; }
+#ringText { left: 0; right: 0; top: 650px; text-align: center; }
+#ringText b { display: block; font: 700 34px "Bricolage"; }
+#ringText span { font: 500 22px "Instrument Sans"; color: #A7B0C8; }
+
+#reader { left: 1700px; top: 330px; width: 180px; height: 420px; border-radius: 34px; background: linear-gradient(#2A3453,#1A2238);
+  border: 2px solid #3A4566; box-shadow: 0 40px 80px -20px rgba(0,0,0,.7); }
+#readerScreen { left: 22px; top: 30px; width: 132px; height: 120px; border-radius: 14px; background: #0A0E18; display: grid; place-items: center;
+  font: 700 22px "Bricolage"; color: #34D399; text-align: center; }
+#readerPad { left: 30px; top: 210px; width: 116px; height: 116px; border-radius: 50%; border: 3px dashed #4B587C; }
+.wave { border: 4px solid #22D3EE; border-radius: 50%; }
+
+#emuCap { left: 160px; top: 330px; width: 900px; }
+#emuCap .h { font-size: 100px; }
+#emuCap p { font: 500 40px/1.35 "Instrument Sans"; color: #A7B0C8; margin-top: 34px; max-width: 820px; }
+
+#lockScreen { inset: 0; display: grid; place-items: center; }
+#sec { left: 160px; top: 270px; width: 940px; }
+#sec .h { font-size: 96px; margin-bottom: 56px; }
+.si { font: 600 40px/1.25 "Instrument Sans"; margin-bottom: 30px; display: flex; gap: 22px; align-items: center; }
+.si svg { width: 46px; height: 46px; flex: none; }
+
+#end { left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#end .logo { width: 150px; height: 150px; margin-bottom: 40px; }
+#end .h { font-size: 140px; }
+#end .tag { font: 500 44px "Instrument Sans"; color: #A7B0C8; margin-top: 26px; }
+#end .url { font: 400 34px "JetBrains Mono"; color: #22D3EE; margin-top: 60px; }
+#end .crs { font: 600 30px "Instrument Sans"; color: #FF7A6B; margin-top: 70px; letter-spacing: .04em; }
+#black { inset: 0; background: #000; pointer-events: none; }
+</style></head>
+<body>
+<div id="glow" class="abs"></div>
+
+<div id="presents" class="abs">Coral Reef Studios<small>PRESENTS</small></div>
+<div id="tooMany" class="abs h">Too many cards.</div>
+<div id="scatter"></div>
+
+<div id="title" class="abs"><div class="h">CardVault NFC</div><p>Every card you carry, locked on your phone.</p></div>
+
+<div id="feat" class="abs">
+  <div class="h">All in one wallet</div>
+  <div class="fi" style="--k:#E11D48">Transit cards</div>
+  <div class="fi" style="--k:#2563EB">Boarding passes</div>
+  <div class="fi" style="--k:#A78BFA">Event tickets</div>
+  <div class="fi" style="--k:#F59E0B">Loyalty and gift cards</div>
+  <div class="fi" style="--k:#0EA5E9">NFC tags and badges</div>
+</div>
+
+<div id="emuCap" class="abs"><div class="h">Your phone becomes the card.</div><p>Only after your fingerprint, and only for 45 seconds.</p></div>
+
+<div id="sec" class="abs">
+  <div class="h">Private by design</div>
+  <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Encrypted with a key in your phone's security chip</div>
+  <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9a4 4 0 0 1 0 9z"/><path d="M12 12v5m-2-2 2 2 2-2"/></svg>Backups only your passphrase can open</div>
+  <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>No accounts, no ads, no trackers</div>
+</div>
+
+<div id="reader" class="abs"><div id="readerScreen" class="abs">Tap</div><div id="readerPad" class="abs"></div></div>
+<div id="waves"></div>
+
+<div id="phone" class="abs"><div id="screen">
+  <div id="notch" class="abs"></div>
+  <div id="wallet" class="abs" style="inset:0">
+    <div class="appbar abs">CardVault</div>
+    <div class="wcard c1 abs" style="top:130px"><b>City transit</b><s>Monthly pass, 6 trips left</s><span class="mono">•••• 4829</span></div>
+    <div class="wcard c2 abs" style="top:276px"><b>CV 1042</b><s>Fri 4 Dec, 07:15, gate B12</s><span class="big">BRU ✈ LIS</span></div>
+    <div class="wcard c3 abs" style="top:422px"><b>Summer Night Live</b><s>Sat 20 June, 20:00</s><span class="big" style="font-size:28px">Section C, row 8</span></div>
+    <div class="wcard c4 abs" style="top:568px"><b>Corner Grocery</b><s>Gold member</s><span class="mono">•••• 7731</span></div>
+    <div class="wcard c5 abs" style="top:714px"><b>Desk check-in</b><s>NFC tag</s><span class="mono">04:A2:1F:7C</span></div>
+  </div>
+  <div id="detail" class="abs">
+    <svg id="fp" class="abs" viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-width="2.6">
+      <g stroke="#3A4566"><path d="M14 20a10 10 0 0 1 20 0v3"/><path d="M10 26v-6a14 14 0 0 1 28 0v6"/><path d="M18 34c2-3 2-7 2-14a4 4 0 0 1 8 0c0 9-1 14-4 18"/><path d="M24 20c0 8-1 13-5 19"/><path d="M33 28c0 5-1 9-3 12"/></g>
+      <g id="fpOn" stroke="#22D3EE"><path d="M14 20a10 10 0 0 1 20 0v3"/><path d="M10 26v-6a14 14 0 0 1 28 0v6"/><path d="M18 34c2-3 2-7 2-14a4 4 0 0 1 8 0c0 9-1 14-4 18"/><path d="M24 20c0 8-1 13-5 19"/><path d="M33 28c0 5-1 9-3 12"/></g>
+    </svg>
+    <div id="fpText" class="abs">Touch the sensor</div>
+    <div id="tapCard" class="wcard c5 abs"><b>Desk check-in</b><s>NFC tag</s><span class="mono">04:A2:1F:7C</span></div>
+    <svg id="ring" class="abs" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#2A3453" stroke-width="8"/><circle id="arc" cx="50" cy="50" r="42" fill="none" stroke="#22D3EE" stroke-width="8" stroke-linecap="round" pathLength="100" stroke-dasharray="100" transform="rotate(-90 50 50)"/>
+      <path d="M40 38a14 14 0 0 1 0 24M47 32a22 22 0 0 1 0 36M54 26a30 30 0 0 1 0 48" stroke="#22D3EE" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+    <div id="ringText" class="abs"><b>Ready to tap</b><span id="secs">45 s remaining</span></div>
+  </div>
+  <div id="lockScreen" class="abs"><svg viewBox="0 0 24 24" width="200" height="200" fill="none" stroke="#22D3EE" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.6" fill="#22D3EE"/></svg></div>
+</div></div>
+
+<div id="end" class="abs">
+  <svg class="logo" viewBox="0 0 32 32"><rect x="2" y="7" width="28" height="19" rx="4" fill="#22D3EE"/><rect x="6" y="13" width="7" height="6" rx="1" fill="#141A2B"/><path d="M19 12.5a5 5 0 0 1 0 8M22.5 10a9 9 0 0 1 0 13" stroke="#141A2B" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+  <div class="h">CardVault NFC</div>
+  <div class="tag">Free and open source, for Android</div>
+  <div class="url">dev-uraxium.github.io/CardVault</div>
+  <div class="crs">A Coral Reef Studios product</div>
+</div>
+<div id="black" class="abs"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = v => Math.max(0, Math.min(1, v));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const out = x => 1 - Math.pow(1 - x, 3);
+const inout = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const lerp = (a, b, x) => a + (b - a) * x;
+const show = (el, o, tf = "") => { el.style.opacity = o; el.style.transform = tf; el.style.visibility = o <= 0.001 ? "hidden" : "visible"; };
+const fade = (t, a, b, c, d) => Math.min(out(p(t, a, b)), 1 - p(t, c, d)); // in a→b, out c→d
+
+// scattered physical cards for the "too many cards" beat
+const colors = [["#E11D48","#7F1D1D","City transit","•••• 4829"],["#2563EB","#0B1330","CV 1042","BRU ✈ LIS"],["#F59E0B","#78350F","Corner Grocery","•••• 7731"],
+  ["#10B981","#064E3B","Gym","•••• 0045"],["#A78BFA","#2E1065","Festival pass","Row 8"],["#64748B","#0F172A","Library","•••• 2210"],
+  ["#EC4899","#500724","Coffee club","•••• 9182"],["#0EA5E9","#312E81","Office badge","04:A2:1F"],["#F97316","#7C2D12","Cinema","Seat 14"]];
+const spots = [[1050,180,-14],[1380,120,9],[1250,420,-4],[1600,380,16],[1000,560,8],[1450,700,-11],[1700,640,5],[1150,780,-18],[1550,200,22]];
+const sc = $("scatter");
+const pcs = colors.map((c, i) => { const d = document.createElement("div"); d.className = "pcard abs";
+  d.style.background = `linear-gradient(135deg,${c[0]},${c[1]})`; d.innerHTML = `<b>${c[2]}</b><i>${c[3]}</i>`; sc.appendChild(d); return d; });
+
+const waves = [0,1,2].map(() => { const w = document.createElement("div"); w.className = "wave abs"; $("waves").appendChild(w); return w; });
+
+function render(t) {
+  // 0–3: Coral Reef Studios presents
+  show($("presents"), fade(t, .3, 1.1, 2.3, 2.9), `translateY(${lerp(16, 0, out(p(t, .3, 1.1)))}px)`);
+
+  // 3–7.6: too many cards → fly into the phone
+  show($("tooMany"), fade(t, 3.5, 4.2, 6.8, 7.4), `translateY(${lerp(30, 0, out(p(t, 3.5, 4.2)))}px)`);
+  pcs.forEach((d, i) => {
+    const s = spots[i], tin = out(p(t, 3.0 + i * .12, 3.8 + i * .12)), tfly = inout(p(t, 6.9 + i * .05, 7.9 + i * .05));
+    const x = lerp(lerp(s[0], s[0] + 40, 0), 1250, tfly), y = lerp(lerp(-260, s[1], tin), 470, tfly);
+    const r = lerp(s[2] + 30 * (1 - tin), 0, tfly), scale = lerp(1, .25, tfly);
+    show(d, Math.min(tin, 1 - p(t, 7.6 + i * .05, 7.95 + i * .05)), `translate(${x}px,${y}px) rotate(${r}deg) scale(${scale})`);
+  });
+
+  // phone: enters at 6.6, slides for the emulation and security beats
+  const phoneIn = out(p(t, 6.6, 7.6));
+  const toReader = inout(p(t, 19.4, 20.2)) - inout(p(t, 20.9, 21.5));
+  const px = toReader * 55 + lerp(0, -980, inout(p(t, 21.6, 22.6)));
+  const phoneOut = p(t, 26.6, 27.3);
+  show($("phone"), phoneIn * (1 - phoneOut), `translateX(${px}px) translateY(${lerp(60, 0, phoneIn)}px) scale(${lerp(.92, 1, phoneIn)})`);
+
+  // wallet list on screen 7.6–16.9, cards highlight with the feature list
+  show($("wallet"), fade(t, 7.4, 8.2, 16.8, 17.2));
+  [...$("wallet").querySelectorAll(".wcard")].forEach((c, i) => {
+    const a = out(p(t, 7.7 + i * .15, 8.4 + i * .15));
+    const hi = fade(t, 11.6 + i * 1.0, 11.9 + i * 1.0, 12.5 + i * 1.0, 12.9 + i * 1.0);
+    c.style.opacity = a; c.style.transform = `translateY(${lerp(40, 0, a)}px) scale(${1 + hi * .05})`;
+    c.style.boxShadow = hi > .01 ? `0 0 0 ${3 * hi}px #fff, 0 20px 50px -10px rgba(0,0,0,.6)` : "none";
+  });
+
+  // title 8.2–11.2
+  show($("title"), fade(t, 8.2, 9.0, 10.8, 11.3), `translateY(${lerp(30, 0, out(p(t, 8.2, 9.0)))}px)`);
+  const tp = $("title").querySelector("p"); tp.style.opacity = out(p(t, 9.0, 9.7));
+
+  // features 11.3–17
+  show($("feat"), fade(t, 11.2, 11.8, 16.6, 17.1));
+  [...$("feat").querySelectorAll(".fi")].forEach((f, i) => {
+    const a = out(p(t, 11.6 + i * 1.0, 12.1 + i * 1.0)); f.style.opacity = a; f.style.transform = `translateX(${lerp(-30, 0, a)}px)`;
+  });
+
+  // emulation 17–22
+  const det = fade(t, 17.0, 17.4, 21.8, 22.2); show($("detail"), det);
+  const fpFill = p(t, 17.4, 18.3);
+  $("fpOn").style.clipPath = `inset(${(1 - fpFill) * 100}% 0 0 0)`;
+  const fpVis = 1 - p(t, 18.4, 18.7);
+  $("fp").style.opacity = fpVis; $("fpText").style.opacity = fpVis * out(p(t, 17.2, 17.6));
+  $("fpText").textContent = fpFill >= 1 ? "Unlocked" : "Touch the sensor";
+  const armed = out(p(t, 18.5, 19.0));
+  $("tapCard").style.opacity = armed; $("tapCard").style.transform = `translateY(${lerp(30, 0, armed)}px)`;
+  $("ring").style.opacity = armed; $("ringText").style.opacity = armed;
+  const secsLeft = Math.max(0, 45 - Math.max(0, t - 18.7) * 3);
+  $("arc").style.strokeDashoffset = 100 - secsLeft / 45 * 100;
+  $("secs").textContent = `${Math.ceil(secsLeft)} s remaining`;
+
+  show($("reader"), fade(t, 17.8, 18.5, 21.6, 22.1), `translateX(${lerp(120, 0, out(p(t, 17.8, 18.5)))}px)`);
+  const ok = t >= 20.3;
+  $("readerScreen").textContent = ok ? "✓ Accepted" : "Tap";
+  $("readerScreen").style.color = ok ? "#34D399" : "#A7B0C8";
+  waves.forEach((w, i) => {
+    const wp = p(t, 19.9 + i * .18, 20.8 + i * .18);
+    const size = lerp(60, 260, wp);
+    w.style.width = w.style.height = size + "px";
+    w.style.left = (1788 - size / 2) + "px"; w.style.top = (598 - size / 2) + "px";
+    w.style.opacity = wp > 0 && wp < 1 ? (1 - wp) * .9 : 0;
+  });
+  show($("emuCap"), fade(t, 17.3, 18.0, 21.5, 22.0), `translateY(${lerp(30, 0, out(p(t, 17.3, 18.0)))}px)`);
+  $("emuCap").querySelector("p").style.opacity = out(p(t, 18.4, 19.0));
+
+  // security 22–27
+  show($("lockScreen"), fade(t, 22.2, 22.8, 26.5, 27.0), `scale(${lerp(.8, 1, out(p(t, 22.2, 22.8)))})`);
+  const secEl = $("sec"); secEl.style.left = "820px";
+  show(secEl, fade(t, 22.4, 23.0, 26.4, 26.9));
+  [...secEl.querySelectorAll(".si")].forEach((s, i) => {
+    const a = out(p(t, 23.2 + i * .7, 23.8 + i * .7)); s.style.opacity = a; s.style.transform = `translateX(${lerp(30, 0, a)}px)`;
+  });
+
+  // end card 27.2–33
+  show($("end"), fade(t, 27.4, 28.4, 40, 41), `scale(${lerp(.96, 1, out(p(t, 27.4, 28.4)))})`);
+  const kids = $("end").children;
+  [...kids].forEach((k, i) => { k.style.opacity = out(p(t, 27.5 + i * .35, 28.2 + i * .35)); });
+
+  $("black").style.opacity = p(t, 32.3, 33.0);
+}
+window.render = render;
+render(0);
+</script>
+</body></html>

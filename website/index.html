@@ -9,6 +9,8 @@
 <meta property="og:title" content="CardVault NFC">
 <meta property="og:description" content="Every card you carry, locked on your phone. Open source, offline-first, no trackers.">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Coral Reef Studios">
+<meta property="og:image" content="https://dev-uraxium.github.io/CardVault/launch-poster.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
 @font-face { font-family: "Bricolage"; src: url(fonts/bricolage.woff2) format("woff2"); font-weight: 200 800; font-display: swap; }
@@ -163,6 +165,8 @@ h3 { font: 650 1.2rem/1.25 var(--display); margin: 0 0 6px; }
 .fingerprint code { display: block; font: 400 .85rem/1.6 var(--mono); color: var(--ink); word-break: break-all; margin: 8px 0 0; }
 .fingerprint p { margin: 0; color: var(--ink-soft); font-size: .95rem; }
 
+.video-sec { padding-top: 0; }
+.video-sec video { width: 100%; height: auto; border-radius: 20px; border: 1px solid var(--line); background: #000; display: block; }
 .open { display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px; align-items: center; }
 .open p { color: var(--ink-soft); max-width: 58ch; }
 
@@ -282,6 +286,16 @@ footer p { margin: 0; max-width: 70ch; }
     </div>
   </div>
 
+  <section id="video" class="video-sec">
+    <div class="wrap">
+      <h2>See it in 30 seconds</h2>
+      <video controls preload="none" poster="launch-poster.jpg" width="1920" height="1080">
+        <source src="launch.mp4" type="video/mp4">
+        Your browser can't play this video. <a href="launch.mp4">Download it</a> instead.
+      </video>
+    </div>
+  </section>
+
   <section class="band" id="cards">
     <div class="wrap">
       <h2>One wallet for everything with a chip or a code</h2>
@@ -384,7 +398,7 @@ footer p { margin: 0; max-width: 70ch; }
 
 <footer>
   <div class="wrap">
-    <p>© 2026 uraXium. CardVault NFC is free software under the <a href="https://github.com/dev-uraXium/CardVault/blob/main/LICENSE">GPL-3.0</a>. This site loads no trackers or third-party fonts.</p>
+    <p>CardVault NFC is a <span style="color:var(--coral)">Coral Reef Studios</span> product, made by uraXium. © 2026. Free software under the <a href="https://github.com/dev-uraXium/CardVault/blob/main/LICENSE">GPL-3.0</a>. This site loads no trackers or third-party fonts.</p>
     <p>MOBIB, Apple Wallet, Google Drive and other names belong to their owners. CardVault isn't affiliated with them.</p>
   </div>
 </footer>

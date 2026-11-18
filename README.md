@@ -10,6 +10,8 @@ Biometric-locked, offline-first, and nobody can read your backups but you.**
 [![Build](https://github.com/dev-uraXium/CardVault/actions/workflows/ci.yml/badge.svg)](https://github.com/dev-uraXium/CardVault/actions/workflows/ci.yml)
 ![Android 10+](https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&logoColor=white)
 
+*A **Coral Reef Studios** product*
+
 **[Website](https://dev-uraxium.github.io/CardVault/)** · **[Download](https://github.com/dev-uraXium/CardVault/releases/latest)**
 
 </div>
@@ -91,7 +93,7 @@ Bug reports, ideas and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIB
 
 ## License
 
-Copyright © 2026 uraXium
+Copyright © 2026 uraXium / Coral Reef Studios
 
 CardVault NFC is free software: you can redistribute it and/or modify it under the terms of the
 **GNU General Public License v3.0 or later**. It's distributed without any warranty. See [LICENSE](LICENSE).
